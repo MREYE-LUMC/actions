@@ -1,0 +1,56 @@
+name: Publish a Python module to PyPI and GitHub
+description: Download a Python module built distributions and publish them to PyPI and GitHub Releases
+
+inputs:
+  tag: 
+    description: "The git tag for the release"
+    required: true
+  python-version:
+    description: "The Python version to set up (e.g., '3.13', '3.14', etc.)"
+    required: false
+    default: ""
+  artifact-name:
+    description: "The name of the artifact to upload"
+    required: false
+    default: "python-distributions"
+  artifact-path:
+    description: "The path to the built distributions to upload"
+    required: false
+    default: "dist"
+  testpypi:
+    description: "Whether to publish to TestPyPI instead of PyPI"
+    required: false
+    default: "false"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v7
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: ${{ inputs.artifact-path }}
+    - name: "Set up Python with UV"
+      uses: ./python-setup
+      with:
+        python-version: ${{ inputs.python-version }}
+    - if: ${{ inputs.testpypi == 'false' }}
+      name: Publish to PyPI
+      run: uv publish
+      shell: bash
+    - if: ${{ inputs.testpypi == 'true' }}
+      name: Publish to TestPyPI
+      run: uv publish --publish-url https://test.pypi.org/legacy/
+      shell: bash
+    - name: Upload wheels to GitHub release
+      uses: svenstaro/upload-release-action@2.11.3
+      with:
+        tag: ${{ inputs.tag }}
+        file: "${{ inputs.artifact-path }}/*.whl"
+        file_glob: true
+    - name: Upload dist to GitHub release
+      uses: svenstaro/upload-release-action@2.11.3
+      with:
+        tag: ${{ inputs.tag }}
+        file: "${{ inputs.artifact-path }}/*.tar.gz"
+        file_glob: true

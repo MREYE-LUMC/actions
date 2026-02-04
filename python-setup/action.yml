@@ -1,0 +1,27 @@
+name: Setup Python with UV
+description: Setup a Python environment using `uv`
+
+inputs:
+  python-version:
+    description: "The Python version to set up (e.g., '3.13', '3.14', etc.)"
+    required: false
+    default: ""
+  sync:
+    description: "Whether to sync the uv environment after setup"
+    required: false
+    default: "true"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Set up Python"
+      uses: actions/setup-python@v6
+      with:
+        python-version: ${{ inputs.python-version }}
+    - name: Set up uv
+      id: setup-uv
+      uses: astral-sh/setup-uv@v7
+    - name: Sync uv environment
+      if: ${{ inputs.sync == 'true' }}
+      run: uv sync
+      shell: bash

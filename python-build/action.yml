@@ -1,0 +1,33 @@
+name: Build a Python module
+description: Build a Python module and upload the built distributions as artifact
+
+inputs:
+  python-version:
+    description: "The Python version to set up (e.g., '3.13', '3.14', etc.)"
+    required: false
+    default: ""
+  artifact-name:
+    description: "The name of the artifact to upload"
+    required: false
+    default: "python-distributions"
+  artifact-path:
+    description: "The path to the built distributions to upload"
+    required: false
+    default: "dist/"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Set up Python with UV"
+      uses: ./python-setup
+      with:
+        python-version: ${{ inputs.python-version }}
+        sync: "false"
+    - name: Build distributions
+      run: uv build
+      shell: bash
+    - name: Upload artifact
+      uses: actions/upload-artifact@v6
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: ${{ inputs.artifact-path }}

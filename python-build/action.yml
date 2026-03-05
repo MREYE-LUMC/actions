@@ -19,7 +19,7 @@ runs:
   using: "composite"
   steps:
     - name: "Set up Python with UV"
-      uses: ./python-setup
+      uses: MREYE-LUMC/actions/python-setup@main
       with:
         python-version: ${{ inputs.python-version }}
         sync: "false"

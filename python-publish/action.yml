@@ -43,13 +43,13 @@ runs:
       run: uv publish --publish-url https://test.pypi.org/legacy/
       shell: bash
     - name: Upload wheels to GitHub release
-      uses: svenstaro/upload-release-action@2.11.3
+      uses: svenstaro/upload-release-action@2.11.5
       with:
         tag: ${{ inputs.tag }}
         file: "${{ inputs.artifact-path }}/*.whl"
         file_glob: true
     - name: Upload dist to GitHub release
-      uses: svenstaro/upload-release-action@2.11.3
+      uses: svenstaro/upload-release-action@2.11.5
       with:
         tag: ${{ inputs.tag }}
         file: "${{ inputs.artifact-path }}/*.tar.gz"

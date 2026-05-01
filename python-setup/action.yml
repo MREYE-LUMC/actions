@@ -20,7 +20,7 @@ runs:
         python-version: ${{ inputs.python-version }}
     - name: Set up uv
       id: setup-uv
-      uses: astral-sh/setup-uv@v7
+      uses: astral-sh/setup-uv@v8.1.0
     - name: Sync uv environment
       if: ${{ inputs.sync == 'true' }}
       run: uv sync
